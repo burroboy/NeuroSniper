@@ -5,8 +5,21 @@
   "browser_action": {
     "default_popup": "popup.html"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://emdata1.int.janelia.org/neuroglancer/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
   "permissions": [
     "storage",
-    "clipboardWrite"
+    "clipboardWrite",
+    "tabs",
+    "http://emdata1.int.janelia.org/neuroglancer/*"
   ]
 }
