@@ -8,6 +8,10 @@ function copyToClipboard (text) {
     document.body.removeChild(sheetString);
 }
 
+function getPosition () {
+    return '1\t2\t3\t'
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('getter-button').addEventListener(
         'click', copyToClipboard('Test1'));
