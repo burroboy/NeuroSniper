@@ -1,0 +1,12 @@
+{
+  "manifest_version": 2,
+  "name": "NeuroGlancer Split Tool Extension",
+  "version": "0.1",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage",
+    "clipboardWrite"
+  ]
+}
