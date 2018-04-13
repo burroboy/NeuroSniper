@@ -1,13 +1,24 @@
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
-        // console.log("Recieved messages");
-        // console.log(sender.tab ?
-        //     "from a content script:" + sender.tab.url :
-        //     "from the extension");
-        console.log(getReportData());
-        if (request.greeting == "hello")
-            sendResponse({farewell: "goodbye"});
+        if (request.type === "origin-data")
+            var data = getData();
+            console.log(data);
+            sendResponse(data);
     });
+
+function getData (){
+    var pos = getPosition();
+    var segmentationID = { "segID": getSegmentationID()};
+    return Object.assign({}, pos, segmentationID);
+}
+
+function getPosition () {
+    var pos = {};
+    pos["x"] = getCoordinateValue("x");
+    pos["y"] = getCoordinateValue("y");
+    pos["z"] = getCoordinateValue("z");
+    return pos;
+}
 
 function getCoordinateValue (coordinate) {
     let inputs = document.querySelectorAll("input.position-status-coord");
@@ -21,35 +32,30 @@ function getCoordinateValue (coordinate) {
     return "";
 }
 
-function getPosition () {
-    var pos = {};
-    pos["x"] = getCoordinateValue("x");
-    pos["y"] = getCoordinateValue("y");
-    pos["z"] = getCoordinateValue("z");
-    return pos;
-}
-
-function getReportData (){
-    var pos = getPosition();
-    var segmentationIDs = getSegmentationIDs();
-    return text;
-}
-
-function getSegmentationIDs (){
+function getSegmentationID (){
     let url = window.location.href;
     let re = /(?<=segmentation'_'segments':\[)[^\]]*/i;
-    var text = url.match(re)[0];
-    arr = text.match(/[0-9]*/)
-    return arr;
-}
-console.log(getSegmentationIDs());
+    let text = url.match(re)[0];
+    let arr = text.match(/\d+/g);
+    if(arr.length === 0) {
+        return null;
+    } else if (arr.length === 1 && arr){
+        return arr[0];
+    } else {
+        for( var i = 0; i < arr.length; i++){
+            for( var j = 0;  j < arr.length; j++ ){
+                if(i !== j) {
+                    if(arr[j] === "1000" + arr[i]){
+                        return arr[i];
+                    } else if (arr[i] === "1000" + arr[j]){
+                        return arr[j];
+                    }
+                }
+            }
+        }
 
-function copyToClipboard (text) {
-    var sheetString = document.createElement("input");
-    document.body.appendChild(sheetString);
-    sheetString.setAttribute("value", text);
-    sheetString.focus();
-    sheetString.select();
-    document.execCommand("Copy");
-    document.body.removeChild(sheetString);
+        // Reaches this if no string is found as a substring of another
+        console.log("Returning first segmentation id as the default: " + arr[0]);
+        return arr[0];
+    }
 }
