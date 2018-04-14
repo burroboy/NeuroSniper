@@ -3,11 +3,43 @@ document.addEventListener('DOMContentLoaded', function () {
         'click', buttonPress)
 });
 
-window.onloadstart = function() {
+chrome.storage.local.get(["user", "assignment", "supervoxel", "comment"], function(results) {
+    document.getElementById("user").value = typeof results.user !== "undefined" ? results.user : "";
+    document.getElementById("assignment").value = typeof results.assignment !== "undefined" ? results.assignment : "";
+    document.getElementById("supervoxel").value = typeof results.supervoxel !== "undefined" ? results.supervoxel : "";
+    document.getElementById("comment").value = typeof results.comment !== "undefined" ? results.comment : "";
+});
+
+window.onload = function() {
     document.getElementById("user").addEventListener('change', function () {
-        console.log('user changes');
+        let user = document.getElementById("user").value;
+        chrome.storage.local.set({"user": user}, function () {
+            console.log("Changing user: " + user);
+        });
     });
-}
+
+    document.getElementById("assignment").addEventListener('change', function () {
+        let assignment = document.getElementById("assignment").value;
+        chrome.storage.local.set({"assignment": assignment}, function () {
+            console.log("Changing assignment: " + assignment);
+        });
+    });
+
+    document.getElementById("supervoxel").addEventListener('change', function () {
+        let supervoxel = document.getElementById("supervoxel").value;
+        chrome.storage.local.set({"supervoxel": supervoxel}, function () {
+            console.log("Changing supervoxel: " + supervoxel);
+        });
+    });
+
+    document.getElementById("comment").addEventListener('change', function () {
+        let comment = document.getElementById("comment").value;
+        chrome.storage.local.set({"comment": comment}, function () {
+            console.log("Changing comment: " + comment);
+        });
+    });
+};
+
 
 function buttonPress () {
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -16,14 +48,19 @@ function buttonPress () {
             let assignment = document.getElementById("assignment").value;
             let supervoxel = document.getElementById("supervoxel").value;
             let comment = document.getElementById("comment").value;
+            let x = response.x;
+            let y = response.y;
+            let z = response.z;
             let text = user+"\t"+
                        response.segID+"\t"+
                        assignment+"\t"+
                        supervoxel+"\t"+
-                       response.x+","+response.y+","+response.z+"\t"+
+                       x+","+y+","+z+"\t"+
                        comment;
+            console.log("pressed button");
+            console.log(text);
 
-            copyToClipboard(text);
+            copyToClipboard("You coppied this");
         });
     });
 }
