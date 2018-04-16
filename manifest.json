@@ -9,7 +9,6 @@
     {
       "matches": [
         "<all_urls>"
-//        "http://emdata1.int.janelia.org/neuroglancer/*"
       ],
       "js": [
         "content.js"
@@ -21,6 +20,5 @@
     "storage",
     "clipboardWrite",
     "tabs"
-//    "http://emdata1.int.janelia.org/neuroglancer/*"
   ]
 }
