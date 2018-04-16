@@ -35,7 +35,10 @@ function getCoordinateValue (coordinate) {
 function getSegmentationID (){
     let url = window.location.href;
     let re = /(?<=segmentation'_'segments':\[)[^\]]*/i;
-    let text = url.match(re)[0];
+    let text = url.match(re)? url.match(re)[0]: "";
+    if (text === ""){
+        return "";
+    }
     let arr = text.match(/\d+/g);
     if(arr.length === 0) {
         return null;

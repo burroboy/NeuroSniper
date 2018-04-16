@@ -44,23 +44,23 @@ window.onload = function() {
 function buttonPress () {
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, {type: "origin-data"}, function (response) {
-            let user = document.getElementById("user").value;
-            let assignment = document.getElementById("assignment").value;
-            let supervoxel = document.getElementById("supervoxel").value;
-            let comment = document.getElementById("comment").value;
-            let x = response.x;
-            let y = response.y;
-            let z = response.z;
+            let user = document.getElementById("user").value? document.getElementById("user").value: "";
+            let assignment = document.getElementById("assignment").value? document.getElementById("assignment").value: "";
+            let supervoxel = document.getElementById("supervoxel").value? document.getElementById("supervoxel").value: "";
+            let comment = document.getElementById("comment").value? document.getElementById("comment").value: "";
+            let x = response.x? response.x: "";
+            let y = response.y? response.y: "";
+            let z = response.z? response.z: "";
             let text = user+"\t"+
                        response.segID+"\t"+
                        assignment+"\t"+
                        supervoxel+"\t"+
-                       x+","+y+","+z+"\t"+
+                       x+", "+y+", "+z+"\t"+
                        comment;
             console.log("pressed button");
             console.log(text);
 
-            copyToClipboard("You coppied this");
+            copyToClipboard(text);
         });
     });
 }
