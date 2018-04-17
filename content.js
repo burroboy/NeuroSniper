@@ -1,16 +1,13 @@
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.type === "origin-data")
-            var data = getData();
+            let prefixes = request.prefixes.match(/\d+/g);
+            let pos = getPosition();
+            let segmentationID = { "segID": getSegmentationID(prefixes)};
+            let data = Object.assign({}, pos, segmentationID);
             console.log(data);
             sendResponse(data);
     });
-
-function getData (){
-    var pos = getPosition();
-    var segmentationID = { "segID": getSegmentationID()};
-    return Object.assign({}, pos, segmentationID);
-}
 
 function getPosition () {
     var pos = {};
@@ -32,7 +29,7 @@ function getCoordinateValue (coordinate) {
     return "";
 }
 
-function getSegmentationID (){
+function getSegmentationID (prefixes){
     let url = window.location.href;
     let re = /(?<=segmentation'_'segments':\[)[^\]]*/i;
     let text = url.match(re)? url.match(re)[0]: "";
@@ -48,10 +45,10 @@ function getSegmentationID (){
         for( var i = 0; i < arr.length; i++){
             for( var j = 0;  j < arr.length; j++ ){
                 if(i !== j) {
-                    if(arr[j] === "1000" + arr[i]){
-                        return arr[i];
-                    } else if (arr[i] === "1000" + arr[j]){
+                    if(in_prefix_set(arr[i], arr[j], prefixes)){
                         return arr[j];
+                    } else if (in_prefix_set(arr[j], arr[i], prefixes)){
+                        return arr[i];
                     }
                 }
             }
@@ -61,4 +58,13 @@ function getSegmentationID (){
         console.log("Returning first segmentation id as the default: " + arr[0]);
         return arr[0];
     }
+}
+
+function in_prefix_set(segId, root, prefixes){
+    for(prefix of prefixes){
+        if(segId === prefix + root){
+            return true
+        }
+    }
+    return false
 }

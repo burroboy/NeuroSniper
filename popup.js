@@ -3,11 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
         'click', buttonPress)
 });
 
-chrome.storage.local.get(["user", "assignment", "supervoxel", "comment"], function(results) {
+chrome.storage.local.get(["user", "assignment", "supervoxel", "comment", "prefixes"], function(results) {
     document.getElementById("user").value = typeof results.user !== "undefined" ? results.user : "";
     document.getElementById("assignment").value = typeof results.assignment !== "undefined" ? results.assignment : "";
     document.getElementById("supervoxel").value = typeof results.supervoxel !== "undefined" ? results.supervoxel : "";
     document.getElementById("comment").value = typeof results.comment !== "undefined" ? results.comment : "";
+    document.getElementById("prefixes").value = typeof results.prefixes !== "undefined" ? results.prefixes : "1000,10000";
 });
 
 window.onload = function() {
@@ -38,12 +39,20 @@ window.onload = function() {
             console.log("Changing comment: " + comment);
         });
     });
+
+    document.getElementById("prefixes").addEventListener('change', function () {
+        let prefixes = document.getElementById("prefixes").value;
+        chrome.storage.local.set({"prefixes": prefixes}, function () {
+            console.log("Changing prefixes: " + prefixes);
+        });
+    });
 };
 
 
 function buttonPress () {
+    let prefixes = document.getElementById("prefixes").value? document.getElementById("prefixes").value: "";
     chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {type: "origin-data"}, function (response) {
+        chrome.tabs.sendMessage(tabs[0].id, {type: "origin-data", prefixes: prefixes}, function (response) {
             let user = document.getElementById("user").value? document.getElementById("user").value: "";
             let assignment = document.getElementById("assignment").value? document.getElementById("assignment").value: "";
             let supervoxel = document.getElementById("supervoxel").value? document.getElementById("supervoxel").value: "";
