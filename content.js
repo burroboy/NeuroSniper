@@ -1,7 +1,8 @@
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.type === "origin-data")
-            let prefixes = request.prefixes.match(/\d+/g);
+            var prefixes = request.prefixes;
+            prefixes = prefixes.match(/\d+/g);
             let pos = getPosition();
             let segmentationID = { "segID": getSegmentationID(prefixes)};
             let data = Object.assign({}, pos, segmentationID);
@@ -37,6 +38,9 @@ function getSegmentationID (prefixes){
         return "";
     }
     let arr = text.match(/\d+/g);
+    if (prefixes === null){
+        return arr[0];
+    }
     if(arr.length === 0) {
         return null;
     } else if (arr.length === 1 && arr){
