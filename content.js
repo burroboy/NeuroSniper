@@ -32,8 +32,9 @@ function getCoordinateValue (coordinate) {
 
 function getSegmentationID (prefixes){
     let url = window.location.href;
-    let re = /'segmentation'_'segments':\[[^\]]*/i;
+    let re = /segmentation'_'segments':\[[^\]]*/i;
     let text = url.match(re)? url.match(re)[0]: "";
+    console.log(text);
     if (text === ""){
         return "";
     }
